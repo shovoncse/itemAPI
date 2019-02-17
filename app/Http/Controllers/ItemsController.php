@@ -51,6 +51,7 @@ class ItemsController extends Controller
             $item = new Item;
             $item -> text = $request -> input('text');
             $item -> body = $request -> input('body');
+            $item -> quantity = $request -> input('quantity');
             $item -> save();
 
              return response()->json($item);
@@ -92,7 +93,27 @@ class ItemsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'text' => 'required'
+        ]);
+
+        if($validator->fails()){
+            
+            //return 'fails';
+             $response = array('response' => $validator ->messages(), 'success' => false);
+             return $response;
+
+        }else{
+            //Update Item
+            $item = Item::find($id);
+            $item -> text = $request -> input('text');
+            $item -> body = $request -> input('body');
+            $item -> quantity = $request -> input('quantity');
+            $item -> save();
+
+             return response()->json($item);
+            //return 123;
+        }
     }
 
     /**
@@ -103,6 +124,14 @@ class ItemsController extends Controller
      */
     public function destroy($id)
     { 
-        //
+        //Delete Item
+         $item = Item::find($id);
+         $item -> delete();
+
+         $response = array('response' => 'Item Deleted', 'success' => true);
+         return $response;
+
+        //return 123;
+
     }
 }
